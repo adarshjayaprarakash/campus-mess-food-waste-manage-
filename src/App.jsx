@@ -1,44 +1,161 @@
-import { useState } from 'react';
+
+import { useEffect, useState } from 'react';
 import Header from './components/Header';
 import MealCard from './components/MealCard';
 import SummaryPanel from './components/SummaryPanel';
 import { studentProfile, meals } from './data/sampleData';
 import './index.css';
 
-const today = new Date();
-
-const defaultStatuses = meals.reduce((acc, meal) => {
-  acc[meal.id] = 'eating';
-  return acc;
-}, {});
+const API_URL = 'http://192.168.1.41:5000/api/v1';
 
 function App() {
-  const [mealStatuses, setMealStatuses] = useState(defaultStatuses);
+  const [mealStatuses, setMealStatuses] = useState(() =>
+    meals.reduce((acc, meal) => {
+      acc[meal.id] = 'eating';
+      return acc;
+    }, {})
+  );
+
+  const [apiMealIds, setApiMealIds] = useState({});
   const [savedAt, setSavedAt] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState('');
+  const [apiConnected, setApiConnected] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadMeals() {
+      try {
+        const response = await fetch(`${API_URL}/meals/today`);
+
+        if (!response.ok) {
+          throw new Error(`Could not load meals (${response.status}).`);
+        }
+
+        const data = await response.json();
+
+        const idMap = {};
+        const statusMap = {};
+
+        data.meals.forEach((apiMeal) => {
+          const localMealId = apiMeal.meal_type.toLowerCase();
+
+          idMap[localMealId] = apiMeal.id;
+          statusMap[localMealId] =
+            (apiMeal.user_response?.status || 'EATING').toLowerCase();
+        });
+
+        if (!cancelled) {
+          setApiMealIds(idMap);
+          setMealStatuses((previous) => ({
+            ...previous,
+            ...statusMap,
+          }));
+          setApiConnected(true);
+          setApiError('');
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setApiConnected(false);
+          setApiError(
+            `Could not load meals from the server: ${error.message}`
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadMeals();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleToggle = (mealId, status) => {
-    setMealStatuses((prev) => ({ ...prev, [mealId]: status }));
-    setSavedAt(null); // mark as unsaved on change
+    setMealStatuses((previous) => ({
+      ...previous,
+      [mealId]: status,
+    }));
+    setSavedAt(null);
+    setApiError('');
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (!apiConnected) {
+      setApiError('The backend is not connected. Please check the server.');
+      return;
+    }
+
     setSaving(true);
-    // Simulate async save
-    setTimeout(() => {
+    setApiError('');
+
+    try {
+      for (const meal of meals) {
+        const apiMealId = apiMealIds[meal.id];
+
+        if (!apiMealId) {
+          throw new Error(`Missing backend meal ID for ${meal.label}.`);
+        }
+
+        const response = await fetch(
+          `${API_URL}/meals/${apiMealId}/response`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              roll_number: 'CS21B001',
+              status: mealStatuses[meal.id].toUpperCase(),
+            }),
+          }
+        );
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(
+            result.message ||
+            result.error ||
+            `Could not save ${meal.label} (${response.status}).`
+          );
+        }
+      }
+
+      setSavedAt(
+        new Date().toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      );
+    } catch (error) {
+      setApiError(error.message);
+    } finally {
       setSaving(false);
-      setSavedAt(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }));
-    }, 800);
+    }
   };
 
-  const skippingCount = Object.values(mealStatuses).filter((s) => s === 'skipping').length;
+  const skippingCount = Object.values(mealStatuses).filter(
+    (status) => status === 'skipping'
+  ).length;
+
+  // Preserve the original meal card design and styling.
+  const displayMeals = meals.map((meal) => ({
+    ...meal,
+    id: meal.id,
+  }));
 
   return (
     <div className="app-shell">
-      <Header student={studentProfile} date={today} />
+      <Header student={studentProfile} date={new Date()} />
 
       <main className="main-content">
-        {/* Banner */}
         <div className="page-banner">
           <div className="page-banner__inner">
             <div className="page-banner__text">
@@ -48,19 +165,20 @@ function App() {
                 <strong>{studentProfile.hostel}</strong>.
               </p>
             </div>
+
             {skippingCount > 0 && (
               <div className="skipping-badge">
-                🚫 {skippingCount} meal{skippingCount > 1 ? 's' : ''} skipped today
+                🚫 {skippingCount} meal
+                {skippingCount > 1 ? 's' : ''} skipped today
               </div>
             )}
           </div>
         </div>
 
         <div className="content-grid">
-          {/* Meal Cards Column */}
           <div className="meals-column">
             <div className="meals-grid">
-              {meals.map((meal) => (
+              {displayMeals.map((meal) => (
                 <MealCard
                   key={meal.id}
                   meal={meal}
@@ -70,32 +188,44 @@ function App() {
               ))}
             </div>
 
-            {/* Save Bar */}
             <div className="save-bar">
               <div className="save-bar__left">
-                {savedAt ? (
+                {loading ? (
+                  <span className="save-status save-status--pending">
+                    Loading meals…
+                  </span>
+                ) : savedAt ? (
                   <span className="save-status save-status--saved">
                     ✔ Saved at {savedAt}
                   </span>
                 ) : (
                   <span className="save-status save-status--pending">
-                    Unsaved changes
+                    {apiConnected ? 'Unsaved changes' : 'Backend disconnected'}
                   </span>
                 )}
               </div>
+
               <button
                 id="btn-save-responses"
                 className={`save-btn ${saving ? 'save-btn--loading' : ''}`}
                 onClick={handleSave}
-                disabled={saving}
+                disabled={saving || loading || !apiConnected}
               >
                 {saving ? 'Saving…' : 'Save Responses'}
               </button>
             </div>
+
+            {apiError && (
+              <p role="alert" style={{ color: '#dc2626', marginTop: '12px' }}>
+                {apiError}
+              </p>
+            )}
           </div>
 
-          {/* Summary Sidebar */}
-          <SummaryPanel mealStatuses={mealStatuses} meals={meals} />
+          <SummaryPanel
+            mealStatuses={mealStatuses}
+            meals={displayMeals}
+          />
         </div>
       </main>
 
