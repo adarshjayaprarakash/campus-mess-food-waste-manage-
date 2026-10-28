@@ -197,6 +197,37 @@ a { color: inherit; text-decoration: none; }
   flex-shrink: 0;
 }
 
+/* Logout button (visible only when authenticated) */
+.header-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 50px;
+  color: #f87171;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.header-logout-btn:hover {
+  background: rgba(239,68,68,0.16);
+  border-color: rgba(239,68,68,0.4);
+  transform: translateY(-1px);
+}
+
+.header-logout-btn:active {
+  transform: translateY(0);
+}
+
+.header-logout-label {
+  font-size: 13px;
+}
+
 /* ---------------------------------------------------------
    Main Content
    --------------------------------------------------------- */
@@ -857,6 +888,10 @@ a { color: inherit; text-decoration: none; }
 
   .student-info { display: none; }
 
+  /* Logout: show icon only on mobile */
+  .header-logout-label { display: none; }
+  .header-logout-btn   { padding: 7px 10px; }
+
   .main-content { padding: 20px 16px 40px; }
 
   .page-banner { padding: 20px 20px; }
@@ -872,4 +907,444 @@ a { color: inherit; text-decoration: none; }
 
   .save-bar { flex-direction: column; gap: 12px; align-items: stretch; }
   .save-btn { width: 100%; }
+}
+
+/* =========================================================
+   LOGIN PAGE
+   Added for Stage 2 — student authentication UI foundation.
+   No existing rules above this line were changed.
+   ========================================================= */
+
+/* Shell */
+.login-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-bg);
+  position: relative;
+  overflow: hidden;
+  padding: 24px 16px;
+}
+
+/* Decorative background orbs */
+.login-bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.login-bg-orb--1 {
+  width: 420px;
+  height: 420px;
+  top: -120px;
+  left: -140px;
+  background: radial-gradient(circle, rgba(79,142,247,0.18) 0%, transparent 70%);
+  animation: orb-drift 10s ease-in-out infinite alternate;
+}
+
+.login-bg-orb--2 {
+  width: 360px;
+  height: 360px;
+  bottom: -100px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(124,92,252,0.15) 0%, transparent 70%);
+  animation: orb-drift 13s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes orb-drift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(30px, 20px); }
+}
+
+/* Main wrapper */
+.login-main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  max-width: 440px;
+}
+
+/* Brand */
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.login-brand__icon {
+  font-size: 38px;
+  line-height: 1;
+  filter: drop-shadow(0 0 12px rgba(79,142,247,0.4));
+}
+
+.login-brand__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.login-brand__name {
+  font-size: 22px;
+  font-weight: 800;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.login-brand__sub {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 400;
+  letter-spacing: 0.4px;
+}
+
+/* Card */
+.login-card {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-2);
+  border-radius: var(--radius-xl);
+  padding: 36px 32px 28px;
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: card-rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes card-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Card header */
+.login-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-card__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-heading);
+  letter-spacing: -0.4px;
+}
+
+.login-card__subtitle {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* Backend-pending notice */
+.login-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: rgba(79,142,247,0.08);
+  border: 1px solid rgba(79,142,247,0.25);
+  border-radius: var(--radius-md);
+}
+
+.login-notice__icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.login-notice__text {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* Form */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Field */
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0.2px;
+}
+
+/* Input wrapper */
+.login-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-bg-3);
+  border: 1.5px solid var(--color-border-2);
+  border-radius: var(--radius-md);
+  padding: 0 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login-input-wrap:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(79,142,247,0.15);
+}
+
+.login-input-wrap--error {
+  border-color: var(--color-skip) !important;
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.12) !important;
+}
+
+.login-input-wrap--valid {
+  border-color: var(--color-eat);
+}
+
+.login-input-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.login-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--color-heading);
+  font-size: 14px;
+  font-family: inherit;
+  padding: 13px 0;
+  caret-color: var(--color-accent);
+}
+
+.login-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.login-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Show/hide password toggle */
+.login-show-pwd {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.login-show-pwd:hover { opacity: 1; }
+.login-show-pwd:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Field-level validation error */
+.login-field-error {
+  font-size: 12px;
+  color: var(--color-skip);
+  font-weight: 500;
+  padding-left: 2px;
+  animation: fadeDown 0.15s ease;
+}
+
+/* Server-returned auth error */
+.login-server-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: var(--radius-md);
+  color: #f87171;
+  font-size: 13px;
+  font-weight: 500;
+  animation: fadeDown 0.18s ease;
+}
+
+/* Submit button */
+.login-btn {
+  width: 100%;
+  padding: 14px 24px;
+  background: var(--gradient-brand);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-sm);
+  margin-top: 4px;
+}
+
+.login-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-btn--loading {
+  cursor: wait;
+}
+
+.login-btn__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.login-btn__arrow {
+  font-size: 18px;
+  transition: transform 0.2s;
+}
+
+.login-btn:hover:not(:disabled) .login-btn__arrow {
+  transform: translateX(3px);
+}
+
+/* Spinner (reuses shared keyframe 'spin' from existing CSS) */
+.login-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+/* Help text */
+.login-help-text {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Footer note */
+.login-footer-note {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 28px 20px 24px;
+    border-radius: var(--radius-lg);
+  }
+
+  .login-brand__icon { font-size: 30px; }
+  .login-brand__name { font-size: 18px; }
+}
+
+/* =========================================================
+   REGISTRATION PAGE
+   Added for Stage 3 — student registration UI.
+   Reuses all login-page CSS tokens; only the nav-link,
+   optional-label, password hint, and wider-card rules are new.
+   No existing rules above this line were changed.
+   ========================================================= */
+
+/* Register page main wrapper — slightly wider than login to
+   accommodate 5 fields comfortably on one screen */
+.register-main {
+  max-width: 480px;
+}
+
+/* "New student? Register" / "Already have an account? Sign in"
+   navigation link shown at the bottom of both auth cards */
+.reg-nav-text {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.reg-nav-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--color-accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s, opacity 0.15s;
+}
+
+.reg-nav-link:hover { color: var(--color-accent-2); }
+.reg-nav-link:disabled { opacity: 0.5; cursor: not-allowed; }
+.reg-nav-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* "(optional)" badge beside email label */
+.reg-optional-label {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  margin-left: 4px;
+  letter-spacing: 0.2px;
+}
+
+/* Password strength hint (informational, not blocking) */
+.reg-pwd-hint {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  padding-left: 2px;
+  margin-top: -4px;
+  animation: fadeDown 0.15s ease;
+}
+
+/* Responsive — register card on small screens */
+@media (max-width: 520px) {
+  .register-main {
+    max-width: 100%;
+  }
 }

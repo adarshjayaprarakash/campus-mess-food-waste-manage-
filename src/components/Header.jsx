@@ -1,6 +1,12 @@
-import React from 'react';
-
-export default function Header({ student, date }) {
+/**
+ * Header — sticky top navigation bar.
+ *
+ * Props:
+ *   student   object   — student profile to display (name, rollNo, hostel, avatarInitials)
+ *   date      Date     — date to format and show
+ *   onLogout  fn|null  — when provided (authenticated state), renders the Logout button
+ */
+export default function Header({ student, date, onLogout }) {
   const formatted = date.toLocaleDateString('en-IN', {
     weekday: 'long',
     year: 'numeric',
@@ -33,6 +39,20 @@ export default function Header({ student, date }) {
             {student.avatarInitials}
           </div>
         </div>
+
+        {/* Logout — only rendered when an onLogout handler is provided (authenticated) */}
+        {typeof onLogout === 'function' && (
+          <button
+            id="btn-logout"
+            className="header-logout-btn"
+            onClick={onLogout}
+            aria-label="Sign out of MealSync"
+            title="Sign out"
+          >
+            <span aria-hidden="true">🚪</span>
+            <span className="header-logout-label">Sign out</span>
+          </button>
+        )}
       </div>
     </header>
   );
