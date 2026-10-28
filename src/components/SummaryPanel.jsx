@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { weeklyHistory, messInfo } from '../data/sampleData';
 
 export default function SummaryPanel({ mealStatuses, meals }) {
@@ -101,8 +101,8 @@ export default function SummaryPanel({ mealStatuses, meals }) {
       <section className="summary-section info-box" aria-label="Important notice">
         <h3 className="summary-title"><span>ℹ️</span> Note</h3>
         <p className="info-text">
-          Your opt-out responses help the mess team reduce food waste. Cutoff times will be enforced 
-          once the backend is connected. Currently, all selections are saved locally.
+          Your opt-out responses help the mess team reduce food waste. Selections
+          are saved to the backend. Cutoff time enforcement is coming soon.
         </p>
       </section>
     </aside>

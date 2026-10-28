@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function MealCard({ meal, status, onToggle }) {
   const [menuOpen, setMenuOpen] = useState(false);

@@ -2,9 +2,9 @@
 export const studentProfile = {
   id: 'STU2024001',
   name: 'Adarsh Jayaprakash',
-  rollNo: 'CS21B001',
-  hostel: 'Nilgiri Block',
-  room: 'N-204',
+  rollNo: 'CCE25CSBS004',
+  hostel: 'Christ College Hostel',
+  room: 'C-204',
   year: '3rd Year',
   department: 'Computer Science & Engineering',
   avatarInitials: 'AJ',
@@ -60,7 +60,7 @@ export const weeklyHistory = [
 
 // Campus mess info
 export const messInfo = {
-  name: 'Nilgiri Mess',
+  name: 'Christ College Mess',
   capacity: 450,
   todayRegistered: 387,
 };
