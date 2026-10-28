@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Campus Mess Manager Dashboard Ã¢â‚¬â€ meal response tracking, forecasting and food waste reporting.">
+  <title>Mess Manager Dashboard Ã¢â‚¬â€ Campus Mess</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+       LOGIN OVERLAY
+       Authenticates against Arya's Express Backend API:
+       POST /api/v1/auth/manager/login
+       Supports offline demo mode fallback.
+       Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
+  <div id="login-overlay" class="login-overlay" role="main" aria-label="Manager login">
+    <div class="login-card">
+      <div class="login-logo" aria-hidden="true">Ã°Å¸ÂÂ½Ã¯Â¸Â</div>
+      <h1 class="login-title">Campus Mess</h1>
+      <p class="login-subtitle">Manager Dashboard</p>
+
+      <div id="login-backend-status" class="login-backend-status">
+        <span class="status-indicator online" id="backend-status-dot"></span>
+        <span class="status-text" id="backend-status-text">Backend: <code>172.17.243.12:5000</code></span>
+      </div>
+
+      <form id="login-form" class="login-form" novalidate>
+        <div class="form-group">
+          <label for="username-input" class="form-label">Manager Username</label>
+          <input
+            type="text"
+            id="username-input"
+            class="login-input"
+            placeholder="Username (e.g. manager)"
+            value="manager"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password-input" class="form-label">Password / Demo PIN</label>
+          <input
+            type="password"
+            id="password-input"
+            class="login-input"
+            placeholder="Enter password (e.g. manager123)"
+            autocomplete="current-password"
+            required
+            aria-describedby="login-error"
+          >
+        </div>
+
+        <div class="form-mode-select">
+          <label class="mode-label">
+            <input type="checkbox" id="demo-mode-checkbox">
+            <span>Work in Offline Demo Mode</span>
+          </label>
+        </div>
+
+        <button type="submit" id="login-submit-btn" class="btn btn-primary btn-full">Sign In to Dashboard</button>
+
+        <p id="login-error" class="login-error" role="alert" hidden></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+       MAIN DASHBOARD
+       Revealed once the manager authenticates.
+       Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
+  <div id="dashboard" class="dashboard" hidden aria-label="Manager dashboard">
+
+    <header class="dashboard-header" role="banner">
+      <div class="header-brand">
+        <span class="header-icon" aria-hidden="true">Ã°Å¸ÂÂ½Ã¯Â¸Â</span>
+        <div>
+          <h1 class="header-title">Mess Manager Dashboard</h1>
+          <p class="header-subtitle">Campus Food Waste Reduction System</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="dashboard-mode-badge" class="badge badge-live" aria-label="Current operational mode">Ã°Å¸Å¸Â¢ Live Backend</span>
+        <button id="header-scan-btn" class="btn btn-outline btn-sm" type="button" title="Scan student roll number at dining gate">Ã°Å¸â€œâ€¹ Check-In Scan</button>
+        <button id="logout-btn" class="btn btn-outline btn-sm" type="button">Sign Out</button>
+      </div>
+    </header>
+
+    <main class="dashboard-main" role="main">
+
+      <!-- Date Navigator Ã¢â‚¬â€ rendered by Components.renderDateNavigator() -->
+      <div id="date-navigator" aria-label="Date navigation"></div>
+
+      <!-- Mode & Connection Notice -->
+      <div id="mode-notice" class="notice notice-info" role="note">
+        <strong>Ã°Å¸Å¸Â¢ Live Backend Mode:</strong> Connected to <code>http://172.17.243.12:5000/api/v1</code>.
+        Displaying real student headcount intents and forecasting.
+      </div>
+
+      <!-- Daily Summary Bar Ã¢â‚¬â€ rendered by Components.renderDailySummaryBar() -->
+      <div id="daily-summary" aria-label="Daily response summary" aria-live="polite"></div>
+
+      <!-- Meal Response Cards Ã¢â‚¬â€ rendered by app.js loop over CONFIG.MEAL_ORDER -->
+      <div id="meal-cards" class="meal-cards-grid" aria-label="Meal response cards"></div>
+
+      <!-- Unanswered Response Panel Ã¢â‚¬â€ rendered by Components.renderUnansweredResponsePanel() -->
+      <div id="unanswered-panel" aria-label="Unanswered responses" aria-live="polite"></div>
+
+      <!-- Food Waste Report Ã¢â‚¬â€ rendered by Components.renderFoodWasteReportSection() -->
+      <div id="waste-report" aria-label="Food waste report" aria-live="polite"></div>
+
+    </main>
+
+    <footer class="dashboard-footer" role="contentinfo">
+      <p>
+        Campus Mess Food Waste Reduction System &mdash; Manager View &mdash;
+        <span id="footer-connection-info" class="footer-note">
+          Connected to Express + MySQL backend at <code>http://172.17.243.12:5000</code>
+        </span>
+      </p>
+    </footer>
+
+  </div><!-- /#dashboard -->
+
+  <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+       ATTENDANCE SCAN MODAL
+       Direct check-in via POST /api/v1/manager/attendance/scan
+       Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
+  <div id="scan-modal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="scan-modal-title">
+    <div class="modal-card">
+      <header class="modal-header">
+        <h2 id="scan-modal-title" class="modal-title">Ã°Å¸â€œâ€¹ Dining Hall Attendance Scan</h2>
+        <button type="button" class="modal-close-btn" id="close-scan-modal-btn" aria-label="Close modal">&times;</button>
+      </header>
+      <div class="modal-body">
+        <p class="summary-note">Scan or enter student roll number at the mess entrance to record attendance.</p>
+
+        <div class="form-group">
+          <label for="scan-meal-select" class="form-label">Meal Session</label>
+          <select id="scan-meal-select" class="login-input">
+            <!-- Populated dynamically with today's meals -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="scan-roll-input" class="form-label">Student Roll Number / QR Payload</label>
+          <input
+            type="text"
+            id="scan-roll-input"
+            class="login-input"
+            placeholder="e.g. EXPO471025 or roll number"
+            autocomplete="off"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="scan-station-input" class="form-label">Scanner Station</label>
+          <input
+            type="text"
+            id="scan-station-input"
+            class="login-input"
+            value="MAIN_GATE_DESK"
+          >
+        </div>
+
+        <div id="scan-result-container" hidden></div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-outline btn-sm" id="cancel-scan-btn">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm" id="submit-scan-btn">Record Check-In</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+       WASTE LOGGING MODAL
+       Direct entry via POST /api/v1/manager/meals/:mealId/waste-log
+       Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
+  <div id="waste-modal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="waste-modal-title">
+    <div class="modal-card">
+      <header class="modal-header">
+        <h2 id="waste-modal-title" class="modal-title">Ã°Å¸â€”â€˜Ã¯Â¸Â Record Actual Food Waste Log</h2>
+        <button type="button" class="modal-close-btn" id="close-waste-modal-btn" aria-label="Close modal">&times;</button>
+      </header>
+      <div class="modal-body">
+        <p class="summary-note">Record measured preparation, consumption, and surplus wasted food for the meal.</p>
+
+        <div class="form-group">
+          <label for="waste-meal-select" class="form-label">Meal Session</label>
+          <select id="waste-meal-select" class="login-input">
+            <!-- Populated dynamically with today's meals -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="waste-prep-input" class="form-label">Prepared Weight (kg) *</label>
+          <input
+            type="number"
+            step="0.1"
+            id="waste-prep-input"
+            class="login-input"
+            placeholder="e.g. 120.0"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="waste-waste-input" class="form-label">Wasted Weight (kg) *</label>
+          <input
+            type="number"
+            step="0.1"
+            id="waste-waste-input"
+            class="login-input"
+            placeholder="e.g. 7.5"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="waste-consumed-input" class="form-label">Consumed Weight (kg) [Optional]</label>
+          <input
+            type="number"
+            step="0.1"
+            id="waste-consumed-input"
+            class="login-input"
+            placeholder="Auto-calculated as (Prepared - Wasted) if omitted"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="waste-remarks-input" class="form-label">Remarks / Menu Notes [Optional]</label>
+          <input
+            type="text"
+            id="waste-remarks-input"
+            class="login-input"
+            placeholder="e.g. Excess rice, shortage of dal"
+          >
+        </div>
+
+        <div id="waste-result-container" hidden></div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-outline btn-sm" id="cancel-waste-btn">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm" id="submit-waste-btn">Save Waste Log</button>
+      </footer>
+    </div>
+  </div>
+
+  <!--
+    Script load order matters (no bundler):
+      1. config.js     Ã¢â‚¬â€ CONFIG constants (no deps)
+      2. api-client.js Ã¢â‚¬â€ ApiClient (depends on CONFIG)
+      3. demo-data.js  Ã¢â‚¬â€ DataAdapter & DemoAdapter (depends on CONFIG, ApiClient)
+      4. waste-calc.js Ã¢â‚¬â€ WasteCalc (depends on CONFIG)
+      5. components.js Ã¢â‚¬â€ Components (depends on CONFIG)
+      6. app.js        Ã¢â‚¬â€ App & initAuth (depends on all above)
+  -->
+  <script src="js/config.js"></script>
+  <script src="js/api-client.js"></script>
+  <script src="js/demo-data.js"></script>
+  <script src="js/waste-calc.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
